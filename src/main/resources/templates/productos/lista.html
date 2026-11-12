@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Productos')}"></head>
+<body>
+<header th:replace="~{fragmentos :: menu}"></header>
+
+<main>
+    <h1>Productos</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Código</th>
+            <th>Medicamento</th>
+            <th>Presentación</th>
+            <th>Categoría</th>
+            <th class="numero">Precio de venta</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${productos}">
+            <td th:text="${p.codigo}">MED-001</td>
+            <td th:text="${p.nombre}">Acetaminofén</td>
+            <td th:text="${p.presentacion}">Tableta 500 mg x 10</td>
+            <td th:text="${p.categoria.nombre}">Analgésicos</td>
+            <td class="numero" th:text="'$ ' + ${#numbers.formatDecimal(p.precioVenta, 1, 'POINT', 0, 'COMMA')}">$ 3.500</td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(productos)}">
+            <td colspan="5">No hay productos registrados.</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+</body>
+</html>

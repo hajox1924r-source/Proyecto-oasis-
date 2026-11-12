@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Lotes')}"></head>
+<body>
+<header th:replace="~{fragmentos :: menu}"></header>
+
+<main>
+    <h1>Lotes</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Medicamento</th>
+            <th>Lote</th>
+            <th>Proveedor</th>
+            <th>Ingreso</th>
+            <th>Vencimiento</th>
+            <th class="numero">Unidades</th>
+            <th>Estado</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="l : ${lotes}">
+            <td th:text="${l.producto.nombre}">Acetaminofén</td>
+            <td th:text="${l.numeroLote}">A-1001</td>
+            <td th:text="${l.proveedor.nombre}">Proveedor</td>
+            <td th:text="${#temporals.format(l.fechaIngreso, 'dd/MM/yyyy')}">01/01/2026</td>
+            <td th:text="${#temporals.format(l.fechaVencimiento, 'dd/MM/yyyy')}">01/01/2027</td>
+            <td class="numero" th:text="${l.cantidad}">40</td>
+            <td>
+                <span class="estado"
+                      th:classappend="${l.estado == 'VENCIDO' ? 'vencido' : (l.estado == 'VIGENTE' ? 'vigente' : 'proximo')}"
+                      th:text="${l.estado}">VIGENTE</span>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(lotes)}">
+            <td colspan="7">No hay lotes registrados.</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+</body>
+</html>

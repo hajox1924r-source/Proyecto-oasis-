@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Inicio')}"></head>
+<body>
+<header th:replace="~{fragmentos :: menu}"></header>
+
+<main>
+    <h1>Control de vencimientos</h1>
+
+    <section class="resumen">
+        <a class="tarjeta vencido" th:href="@{/vencimientos}">
+            <strong th:text="${vencidos}">0</strong>
+            <span>lotes vencidos</span>
+        </a>
+        <a class="tarjeta proximo" th:href="@{/vencimientos}">
+            <strong th:text="${proximos}">0</strong>
+            <span>lotes próximos a vencer</span>
+        </a>
+    </section>
+</main>
+
+</body>
+</html>

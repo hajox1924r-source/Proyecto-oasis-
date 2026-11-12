@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Vencimientos')}"></head>
+<body>
+<header th:replace="~{fragmentos :: menu}"></header>
+
+<main>
+    <h1>Medicamentos vencidos y por vencer</h1>
+    <p>Lotes con unidades disponibles que ya vencieron o vencen en los próximos 30 días.</p>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Medicamento</th>
+            <th>Lote</th>
+            <th>Vencimiento</th>
+            <th class="numero">Días restantes</th>
+            <th class="numero">Unidades</th>
+            <th>Estado</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="l : ${lotes}">
+            <td th:text="${l.producto.nombre}">Ibuprofeno</td>
+            <td th:text="${l.numeroLote}">B-2001</td>
+            <td th:text="${#temporals.format(l.fechaVencimiento, 'dd/MM/yyyy')}">15/11/2026</td>
+            <td class="numero" th:text="${l.diasRestantes}">15</td>
+            <td class="numero" th:text="${l.cantidad}">12</td>
+            <td>
+                <span class="estado"
+                      th:classappend="${l.estado == 'VENCIDO' ? 'vencido' : 'proximo'}"
+                      th:text="${l.estado}">PROXIMO A VENCER</span>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(lotes)}">
+            <td colspan="6">No hay medicamentos vencidos ni próximos a vencer.</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+</body>
+</html>
