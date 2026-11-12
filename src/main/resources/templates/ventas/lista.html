@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabeza('Ventas')}"></head>
+<body>
+<header th:replace="~{fragmentos :: menu}"></header>
+
+<main>
+    <h1>Ventas</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>N.º</th>
+            <th>Fecha</th>
+            <th>Cajero</th>
+            <th class="numero">Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="v : ${ventas}">
+            <td th:text="${v.idVenta}">1</td>
+            <td th:text="${#temporals.format(v.fecha, 'dd/MM/yyyy HH:mm')}">25/10/2026 09:15</td>
+            <td th:text="${v.cajero.nombre}">Cajero</td>
+            <td class="numero" th:text="'$ ' + ${#numbers.formatDecimal(v.total, 1, 'POINT', 0, 'COMMA')}">$ 11.500</td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(ventas)}">
+            <td colspan="4">No hay ventas registradas.</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+</body>
+</html>
