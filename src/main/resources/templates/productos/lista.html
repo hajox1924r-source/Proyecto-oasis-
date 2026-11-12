@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragmentos :: head-general}">
+    <title>Productos - Farmacia Oasis</title>
+</head>
+<body>
+
+    <!-- Fragmento: Sidebar -->
+    <aside th:replace="~{fragmentos :: sidebar}"></aside>
+
+    <!-- Contenido principal -->
+    <main>
+        <!-- Mensajes flash -->
+        <div th:replace="~{fragmentos :: mensajes-flash}"></div>
+
+        <!-- Barra superior con buscador -->
+        <section class="barra-superior">
+            <h1>Consulta y Gestión de Productos</h1>
+
+            <form method="get" th:action="@{/productos}" class="form-busqueda">
+                <input type="text"
+                       name="buscar"
+                       th:value="${buscar} ?: ${param.buscar}"
+                       placeholder="Buscar producto por nombre, concentración o categoría..."
+                       aria-label="Buscar producto">
+                <button type="submit" class="btn-secundario">Buscar</button>
+            </form>
+        </section>
+
+        <!-- Tabla de productos -->
+        <section class="contenido-tabla">
+            <table class="tabla-oasis">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Concentración</th>
+                        <th>Categoría</th>
+                        <th class="numero">Precio Venta</th>
+                        <th class="numero">Stock Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="producto : ${productos}">
+                        <td th:text="${producto.id}">1</td>
+                        <td th:text="${producto.nombre}">Acetaminofén</td>
+                        <td th:text="${producto.concentracion}">500 mg</td>
+                        <td th:text="${producto.categoria != null} ? ${producto.categoria.nombre} : 'Sin categoría'">Analgésicos</td>
+                        <td class="numero"
+                            th:text="${producto.precioVenta != null ? '$ ' + #numbers.formatDecimal(producto.precioVenta, 1, 'POINT', 0, 'COMMA') : '$ 0'}">$ 3.500</td>
+                        <td class="numero" th:text="${producto.stockTotal} ?: 0">48</td>
+                        <td>
+                            <a th:href="@{/productos/editar/{id}(id=${producto.id})}"
+                               class="btn-sm btn-editar">Ver / Editar</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(productos)}">
+                        <td colspan="7">
+                            <p class="tabla-vacia">
+                                No se encontraron productos registrados para mostrar.
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Fragmento: Footer -->
+    <footer th:replace="~{fragmentos :: footer}"></footer>
+
+</body>
+</html>
