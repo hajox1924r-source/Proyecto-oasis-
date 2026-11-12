@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!-- Partes que se repiten en todas las páginas: el <head> y el menú superior. -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:fragment="cabeza(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' | Farmacia Oasis'">Farmacia Oasis</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+<header th:fragment="menu" class="menu">
+    <a class="marca" th:href="@{/}">Farmacia Oasis</a>
+    <nav>
+        <a th:href="@{/vencimientos}">Vencimientos</a>
+        <a th:href="@{/lotes}" sec:authorize="hasRole('ADMINISTRADOR')">Lotes</a>
+        <a th:href="@{/productos}" sec:authorize="hasRole('ADMINISTRADOR')">Productos</a>
+        <a th:href="@{/ventas}">Ventas</a>
+    </nav>
+    <form class="sesion" th:action="@{/logout}" method="post">
+        <span sec:authentication="name">usuario</span>
+        <button type="submit">Cerrar sesión</button>
+    </form>
+</header>
+
+</body>
+</html>
