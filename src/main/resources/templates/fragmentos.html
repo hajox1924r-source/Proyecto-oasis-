@@ -19,16 +19,16 @@
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">
                 <a class="nav-link" th:href="@{/productos}">Productos</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">
                 <a class="nav-link" th:href="@{/lotes}">Lotes</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/vencimientos}">Vencimientos (Alerta)</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN', 'CAJERO')">
                 <a class="nav-link" th:href="@{/ventas}">Ventas / Facturación</a>
             </li>
         </ul>
@@ -40,8 +40,10 @@
 
 <!-- Fragmento: mensajes-flash -->
 <div th:fragment="mensajes-flash">
-    <div class="alerta-exito" th:if="${exito}" th:text="${exito}">Operación exitosa</div>
-    <div class="alerta-error" th:if="${error}" th:text="${error}">Ocurrió un error</div>
+    <div class="alerta-exito" th:if="${mensajeExito}" th:text="${mensajeExito}">Operación exitosa</div>
+    <div class="alerta-error" th:if="${mensajeError}" th:text="${mensajeError}">Ocurrió un error</div>
+    <div class="alerta-exito" th:if="${exito != null and mensajeExito == null}" th:text="${exito}">Operación exitosa</div>
+    <div class="alerta-error" th:if="${error != null and mensajeError == null}" th:text="${error}">Ocurrió un error</div>
 </div>
 
 <!-- Fragmento: footer -->

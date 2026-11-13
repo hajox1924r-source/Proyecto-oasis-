@@ -11,9 +11,6 @@
 
     <!-- Contenido principal -->
     <main>
-        <!-- Mensajes flash -->
-        <div th:replace="~{fragmentos :: mensajes-flash}"></div>
-
         <!-- Barra superior con buscador -->
         <section class="barra-superior">
             <h1>Consulta y Gestión de Productos</h1>
@@ -28,8 +25,11 @@
             </form>
         </section>
 
+        <!-- Mensajes flash -->
+        <div th:replace="~{fragmentos :: mensajes-flash}"></div>
+
         <!-- Formulario colapsable para registrar un nuevo medicamento -->
-        <section class="bloque-registro">
+        <section class="bloque-registro" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">
             <details>
                 <summary>Registrar nuevo medicamento</summary>
                 <form method="post"
@@ -96,7 +96,7 @@
                         <th>Categoría</th>
                         <th class="numero">Precio Venta</th>
                         <th class="numero">Stock Total</th>
-                        <th>Acciones</th>
+                        <th sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -108,7 +108,7 @@
                         <td class="numero"
                             th:text="${producto.precioVenta != null ? '$ ' + #numbers.formatDecimal(producto.precioVenta, 1, 'POINT', 0, 'COMMA') : '$ 0'}">$ 3.500</td>
                         <td class="numero" th:text="${producto.stockTotal} ?: 0">48</td>
-                        <td>
+                        <td sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">
                             <a th:href="@{/productos/editar/{id}(id=${producto.id})}"
                                class="btn-sm btn-editar">Ver / Editar</a>
                         </td>

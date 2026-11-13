@@ -11,16 +11,16 @@
 
     <!-- Contenido principal -->
     <main>
-        <!-- Mensajes flash -->
-        <div th:replace="~{fragmentos :: mensajes-flash}"></div>
-
         <!-- Barra superior -->
         <section class="barra-superior">
             <h1>Gestión de Entradas de Mercancía y Lotes</h1>
         </section>
 
+        <!-- Mensajes flash -->
+        <div th:replace="~{fragmentos :: mensajes-flash}"></div>
+
         <!-- Formulario de registro de lote -->
-        <section class="bloque-registro">
+        <section class="bloque-registro" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">
             <h2>Registrar entrada de lote</h2>
             <form method="post"
                   th:action="@{/lotes/guardar}"

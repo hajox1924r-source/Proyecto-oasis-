@@ -12,9 +12,6 @@
 
     <!-- Contenido principal -->
     <main>
-        <!-- Mensajes flash -->
-        <div th:replace="~{fragmentos :: mensajes-flash}"></div>
-
         <!-- Barra superior -->
         <section class="barra-superior">
             <div>
@@ -22,6 +19,9 @@
                 <p>Registro de ventas en caja, detalle de factura actual e historial del día.</p>
             </div>
         </section>
+
+        <!-- Mensajes flash -->
+        <div th:replace="~{fragmentos :: mensajes-flash}"></div>
 
         <!-- Sección superior: Formulario para registrar venta / agregar ítem -->
         <section class="bloque-registro">
