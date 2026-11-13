@@ -1,30 +1,56 @@
 <!DOCTYPE html>
-<!-- Partes que se repiten en todas las páginas: el <head> y el menú superior. -->
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:fragment="cabeza(titulo)">
+<!-- Fragmento: head-general -->
+<head th:fragment="head-general">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${titulo} + ' | Farmacia Oasis'">Farmacia Oasis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} ?: 'Farmacia Oasis'">Farmacia Oasis</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 
 <body>
 
-<header th:fragment="menu" class="menu">
-    <a class="marca" th:href="@{/}">Farmacia Oasis</a>
+<!-- Fragmento: sidebar -->
+<aside th:fragment="sidebar" class="sidebar">
     <nav>
-        <a th:href="@{/vencimientos}">Vencimientos</a>
-        <a th:href="@{/lotes}" sec:authorize="hasRole('ADMINISTRADOR')">Lotes</a>
-        <a th:href="@{/productos}" sec:authorize="hasRole('ADMINISTRADOR')">Productos</a>
-        <a th:href="@{/ventas}">Ventas</a>
+        <ul>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+            </li>
+            <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">
+                <a class="nav-link" th:href="@{/productos}">Productos</a>
+            </li>
+            <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">
+                <a class="nav-link" th:href="@{/lotes}">Lotes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/vencimientos}">Vencimientos (Alerta)</a>
+            </li>
+            <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN', 'CAJERO')">
+                <a class="nav-link" th:href="@{/ventas}">Ventas / Facturación</a>
+            </li>
+        </ul>
     </nav>
-    <form class="sesion" th:action="@{/logout}" method="post">
-        <span sec:authentication="name">usuario</span>
-        <button type="submit">Cerrar sesión</button>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="btn-logout">Cerrar sesión</button>
     </form>
-</header>
+</aside>
+
+<!-- Fragmento: mensajes-flash -->
+<div th:fragment="mensajes-flash">
+    <div class="alerta-exito" th:if="${mensajeExito}" th:text="${mensajeExito}">Operación exitosa</div>
+    <div class="alerta-error" th:if="${mensajeError}" th:text="${mensajeError}">Ocurrió un error</div>
+    <div class="alerta-exito" th:if="${exito != null and mensajeExito == null}" th:text="${exito}">Operación exitosa</div>
+    <div class="alerta-error" th:if="${error != null and mensajeError == null}" th:text="${error}">Ocurrió un error</div>
+</div>
+
+<!-- Fragmento: footer -->
+<footer th:fragment="footer">
+    <p>&copy; 2026 Farmacia Oasis. Todos los derechos reservados.</p>
+    <p>Farmacia Oasis - Sistema de gestión de inventario, ventas y control de vencimientos.</p>
+</footer>
 
 </body>
 </html>

@@ -1,34 +1,53 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragmentos :: cabeza('Ventas')}"></head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:with="titulo=${titulo} ?: 'Ventas / Facturación - Farmacia Oasis'">
+<head th:replace="~{fragmentos :: head-general}">
+    <title>Ventas / Facturación - Farmacia Oasis</title>
+</head>
 <body>
-<header th:replace="~{fragmentos :: menu}"></header>
 
-<main>
-    <h1>Ventas</h1>
+    <!-- Fragmento: Sidebar -->
+    <aside th:replace="~{fragmentos :: sidebar}"></aside>
 
-    <table>
-        <thead>
-        <tr>
-            <th>N.º</th>
-            <th>Fecha</th>
-            <th>Cajero</th>
-            <th class="numero">Total</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="v : ${ventas}">
-            <td th:text="${v.idVenta}">1</td>
-            <td th:text="${#temporals.format(v.fecha, 'dd/MM/yyyy HH:mm')}">25/10/2026 09:15</td>
-            <td th:text="${v.cajero.nombre}">Cajero</td>
-            <td class="numero" th:text="'$ ' + ${#numbers.formatDecimal(v.total, 1, 'POINT', 0, 'COMMA')}">$ 11.500</td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(ventas)}">
-            <td colspan="4">No hay ventas registradas.</td>
-        </tr>
-        </tbody>
-    </table>
-</main>
+    <!-- Contenido principal -->
+    <main>
+        <!-- Barra superior -->
+        <section class="barra-superior">
+            <div>
+                <h1>Caja y Facturación</h1>
+                <p>Registro de ventas en caja, detalle de factura actual e historial del día.</p>
+            </div>
+        </section>
 
-</body>
-</html>
+        <!-- Mensajes flash -->
+        <div th:replace="~{fragmentos :: mensajes-flash}"></div>
+
+        <!-- Sección superior: Formulario para registrar venta / agregar ítem -->
+        <section class="bloque-registro">
+            <h2>Registrar venta</h2>
+            <form method="post"
+                  th:action="@{/ventas/agregar}"
+                  class="form-oasis"
+                  th:with="listaLotes=${lotesDisponibles != null ? lotesDisponibles : lotes}">
+                <div class="form-group">
+                    <label for="loteId">Producto / Lote disponible</label>
+                    <select id="loteId" name="loteId" class="form-control" required>
+                        <option value="">Seleccione un medicamento y lote...</option>
+                        <option th:each="lote : ${listaLotes}"
+                                th:if="${lote.cantidad > 0 and (lote.fechaVencimiento == null or lote.estado != 'VENCIDO')}"
+                                th:value="${lote.idLote}"
+                                th:selected="${(loteId != null and loteId == lote.idLote) or (param.lote != null and !#arrays.isEmpty(param.lote) and param.lote[0] == #strings.toString(lote.idLote))}"
+                                th:text="${(lote.producto != null ? lote.producto.nombre : 'Sin medicamento')
+                                         + (lote.producto != null and lote.producto.presentacion != null ? ' (' + lote.producto.presentacion + ')' : '')
+                                         + ' - Lote: ' + (lote.numeroLote ?: '-')
+                                         + ' | Stock: ' + lote.cantidad
+                                         + (lote.fechaVencimiento != null ? ' | Vence: ' + #temporals.format(lote.fechaVencimiento, 'dd/MM/yyyy') : '')
+                                         + (lote.producto != null and lote.producto.precioVenta != null ? ' | $ ' + #numbers.formatDecimal(lote.producto.precioVenta, 1, 'POINT', 0, 'COMMA') : '')}">
+                            Acetaminofén (500 mg) - Lote: A-1001 | Stock: 20 | Vence: 15/12/2026 | $ 3.500
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="cantidad

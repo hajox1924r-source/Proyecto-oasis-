@@ -1,36 +1,139 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragmentos :: cabeza('Productos')}"></head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragmentos :: head-general}">
+    <title>Productos - Farmacia Oasis</title>
+</head>
 <body>
-<header th:replace="~{fragmentos :: menu}"></header>
 
-<main>
-    <h1>Productos</h1>
+    <!-- Fragmento: Sidebar -->
+    <aside th:replace="~{fragmentos :: sidebar}"></aside>
 
-    <table>
-        <thead>
-        <tr>
-            <th>Código</th>
-            <th>Medicamento</th>
-            <th>Presentación</th>
-            <th>Categoría</th>
-            <th class="numero">Precio de venta</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="p : ${productos}">
-            <td th:text="${p.codigo}">MED-001</td>
-            <td th:text="${p.nombre}">Acetaminofén</td>
-            <td th:text="${p.presentacion}">Tableta 500 mg x 10</td>
-            <td th:text="${p.categoria.nombre}">Analgésicos</td>
-            <td class="numero" th:text="'$ ' + ${#numbers.formatDecimal(p.precioVenta, 1, 'POINT', 0, 'COMMA')}">$ 3.500</td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(productos)}">
-            <td colspan="5">No hay productos registrados.</td>
-        </tr>
-        </tbody>
-    </table>
-</main>
+    <!-- Contenido principal -->
+    <main>
+        <!-- Barra superior con buscador -->
+        <section class="barra-superior">
+            <h1>Consulta y Gestión de Productos</h1>
+
+            <form method="get" th:action="@{/productos}" class="form-busqueda">
+                <input type="text"
+                       name="buscar"
+                       th:value="${buscar} ?: ${param.buscar}"
+                       placeholder="Buscar producto por nombre, presentación o categoría..."
+                       aria-label="Buscar producto">
+                <button type="submit" class="btn-secundario">Buscar</button>
+            </form>
+        </section>
+
+        <!-- Mensajes flash -->
+        <div th:replace="~{fragmentos :: mensajes-flash}"></div>
+
+        <!-- Formulario colapsable para registrar un nuevo medicamento -->
+        <section class="bloque-registro" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">
+            <details>
+                <summary>Registrar nuevo medicamento</summary>
+                <form method="post"
+                      th:action="@{/productos/guardar}"
+                      class="form-oasis">
+                    <div class="form-group">
+                        <label for="codigo">Código</label>
+                        <input type="text"
+                               id="codigo"
+                               name="codigo"
+                               class="form-control"
+                               placeholder="Ej. MED-001"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nombre">Nombre del medicamento</label>
+                        <input type="text"
+                               id="nombre"
+                               name="nombre"
+                               class="form-control"
+                               placeholder="Ej. Acetaminofén"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="presentacion">Presentación / Concentración</label>
+                        <input type="text"
+                               id="presentacion"
+                               name="presentacion"
+                               class="form-control"
+                               placeholder="Ej. Tableta 500 mg x 10">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoria">Categoría</label>
+                        <select id="categoria" name="categoria" class="form-control">
+                            <option value="">Seleccione una categoría...</option>
+                            <option th:each="cat : ${categorias}"
+                                    th:value="${cat.id}"
+                                    th:text="${cat.nombre}">Analgésicos</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="precioVenta">Precio de venta</label>
+                        <input type="number"
+                               id="precioVenta"
+                               name="precioVenta"
+                               step="0.01"
+                               min="0"
+                               class="form-control"
+                               placeholder="0.00"
+                               required>
+                    </div>
+
+                    <div class="form-acciones">
+                        <button type="submit" class="btn-primario">Guardar</button>
+                        <button type="reset" class="btn-secundario">Cancelar / Limpiar</button>
+                    </div>
+                </form>
+            </details>
+        </section>
+
+        <!-- Tabla de productos -->
+        <section class="contenido-tabla">
+            <table class="tabla-oasis">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Medicamento</th>
+                        <th>Presentación</th>
+                        <th>Categoría</th>
+                        <th class="numero">Precio Venta</th>
+                        <th sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="producto : ${productos}">
+                        <td th:text="${producto.codigo}">MED-001</td>
+                        <td th:text="${producto.nombre}">Acetaminofén</td>
+                        <td th:text="${producto.presentacion}">Tableta 500 mg x 10</td>
+                        <td th:text="${producto.categoria != null} ? ${producto.categoria.nombre} : 'Sin categoría'">Analgésicos</td>
+                        <td class="numero"
+                            th:text="${producto.precioVenta != null ? '$ ' + #numbers.formatDecimal(producto.precioVenta, 1, 'POINT', 0, 'COMMA') : '$ 0'}">$ 3.500</td>
+                        <td sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">
+                            <a th:href="@{/productos/editar/{id}(id=${producto.id})}"
+                               class="btn-sm btn-editar">Ver / Editar</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${productos == null or #lists.isEmpty(productos)}">
+                        <td colspan="6">
+                            <p class="tabla-vacia">
+                                No se encontraron productos registrados para mostrar.
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Fragmento: Footer -->
+    <footer th:replace="~{fragmentos :: footer}"></footer>
 
 </body>
 </html>

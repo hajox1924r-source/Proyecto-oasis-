@@ -1,23 +1,70 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragmentos :: cabeza('Inicio')}"></head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragmentos :: head-general}">
+    <title>Dashboard - Farmacia Oasis</title>
+</head>
 <body>
-<header th:replace="~{fragmentos :: menu}"></header>
 
-<main>
-    <h1>Control de vencimientos</h1>
+    <!-- Fragmento: Sidebar -->
+    <aside th:replace="~{fragmentos :: sidebar}"></aside>
 
-    <section class="resumen">
-        <a class="tarjeta vencido" th:href="@{/vencimientos}">
-            <strong th:text="${vencidos}">0</strong>
-            <span>lotes vencidos</span>
-        </a>
-        <a class="tarjeta proximo" th:href="@{/vencimientos}">
-            <strong th:text="${proximos}">0</strong>
-            <span>lotes próximos a vencer</span>
-        </a>
-    </section>
-</main>
+    <!-- Contenido principal -->
+    <main>
+        <!-- Sección de bienvenida -->
+        <section class="bienvenida">
+            <h1>Bienvenido, <span sec:authentication="name">Usuario</span></h1>
+            <p>Panel de control y gestión general de Farmacia Oasis.</p>
+        </section>
+
+        <!-- Mensajes flash -->
+        <div th:replace="~{fragmentos :: mensajes-flash}"></div>
+
+        <!-- Grilla de tarjetas de resumen (KPIs) -->
+        <section class="grid-dashboard">
+            <div class="card-kpi">
+                <h3>Total Productos Registrados</h3>
+                <p class="kpi-valor" th:text="${totalProductos} ?: '0'">0</p>
+            </div>
+
+            <div class="card-kpi">
+                <h3>Lotes Activos</h3>
+                <p class="kpi-valor" th:text="${totalLotes} ?: '0'">0</p>
+            </div>
+
+            <div class="card-kpi kpi-alerta">
+                <h3>Medicamentos Próximos a Vencer</h3>
+                <p class="kpi-valor" th:text="${medicamentosPorVencer != null ? medicamentosPorVencer : (proximos ?: '0')}">0</p>
+            </div>
+
+            <div class="card-kpi kpi-peligro">
+                <h3>Medicamentos Vencidos Críticos</h3>
+                <p class="kpi-valor" th:text="${medicamentosVencidos != null ? medicamentosVencidos : (vencidos ?: '0')}">0</p>
+            </div>
+        </section>
+
+        <!-- Sección de accesos directos rápidos -->
+        <section class="accesos-rapidos">
+            <h2>Accesos Rápidos</h2>
+            <div class="grid-accesos">
+                <a th:href="@{/vencimientos}" class="acceso-item">
+                    <h3>Control de Vencimientos</h3>
+                    <p>Monitoreo y alerta de lotes por vencer o vencidos</p>
+                </a>
+                <a th:href="@{/ventas}" class="acceso-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN', 'CAJERO')">
+                    <h3>Ventas / Facturación</h3>
+                    <p>Registro y facturación de ventas en caja</p>
+                </a>
+                <a th:href="@{/productos}" class="acceso-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">
+                    <h3>Gestión de Productos</h3>
+                    <p>Catálogo de medicamentos y precios</p>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Fragmento: Footer -->
+    <footer th:replace="~{fragmentos :: footer}"></footer>
 
 </body>
 </html>
