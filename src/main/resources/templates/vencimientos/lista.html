@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:with="titulo=${titulo} ?: 'Control de Vencimientos - Farmacia Oasis'">
+<head th:replace="~{fragmentos :: head-general}">
+    <title>Control de Vencimientos - Farmacia Oasis</title>
+</head>
+<body>
+
+    <!-- Fragmento: Sidebar -->
+    <aside th:replace="~{fragmentos :: sidebar}"></aside>
+
+    <!-- Contenido principal -->
+    <main>
+        <!-- Mensajes flash -->
+        <div th:replace="~{fragmentos :: mensajes-flash}"></div>
+
+        <!-- Barra superior y filtros rápidos -->
+        <section class="barra-superior">
+            <div>
+                <h1>Control de Vencimientos</h1>
+                <p>Monitoreo de alertas de medicamentos vencidos, próximos a vencer y en estado óptimo.</p>
+            </div>
+
+            <nav class="filtros-vencimientos" aria-label="Filtros rápidos de vencimiento">
+                <a th:href="@{/vencimientos(filtro='todos')}"
+                   class="btn-filtro"
+                   th:classappend="${(filtro == null and param.filtro == null) or filtro == 'todos' or (param.filtro != null and !#arrays.isEmpty(param.filtro) and param.filtro[0] == 'todos') ? 'activo' : ''}">
+                    Todos
+                </a>
+                <a th:href="@{/vencimientos(filtro='por-vencer')}"
+                   class="btn-filtro"
+                   th:classappend="${filtro == 'por-vencer' or (param.filtro != null and !#arrays.isEmpty(param.filtro) and param.filtro[0] == 'por-vencer') ? 'activo' : ''}">
+                    Por vencer
+                </a>
+                <a th:href="@{/vencimientos(filtro='vencidos')}"
+                   class="btn-filtro"
+                   th:classappend="${filtro == 'vencidos' or (param.filtro != null and !#arrays.isEmpty(param.filtro) and param.filtro[0] == 'vencidos') ? 'activo' : ''}">
+                    Vencidos
+                </a>
+            </nav>
+        </section>
+
+        <!-- Tabla de alertas de vencimiento -->
+        <section class="contenido-tabla">
+            <table class="tabla-oasis">
+                <thead>
+                    <tr>
+                        <th>Lote</th>
+                        <th>Medicamento</th>
+                        <th>Fecha de Vencimiento</th>
+                        <th class="numero">Días Restantes</th>
+                        <th>Nivel de Riesgo</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="lote : ${lotesVencimiento}"
+                        th:classappend="${lote.diasRestantes <= 0 ? 'estado-vencido' : (lote.diasRestantes > 0 and lote.diasRestantes <= 30 ? 'estado-por-vencer' : 'estado-vigente')}">
+                        <td th:text="${lote.numeroLote}">A-1001</td>
+                        <td th:text="${lote.producto != null} ? ${lote.producto.nombre} : 'Sin medicamento'">Acetaminofén</td>
+                        <td th:text="${lote.fechaVencimiento != null} ? ${#temporals.format(lote.fechaVencimiento, 'dd/MM/yyyy')} : '-'">15/11/2026</td>
+                        <td class="numero" th:text="${lote.diasRestantes}">15</td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${lote.diasRestantes <= 0 ? 'estado-vencido' : (lote.diasRestantes > 0 and lote.diasRestantes <= 30 ? 'estado-por-vencer' : 'estado-vigente')}"
+                                  th:text="${lote.diasRestantes <= 0 ? 'VENCIDO' : (lote.diasRestantes <= 30 ? 'POR VENCER' : 'ÓPTIMO')}">POR VENCER</span>
+                        </td>
+                        <td>
+                            <a th:if="${lote.diasRestantes <= 0}"
+                               th:href="@{/lotes(id=${lote.idLote})}"
+                               class="btn-sm btn-peligro">Retirar lote</a>
+                            <a th:if="${lote.diasRestantes > 0 and lote.diasRestantes <= 30}"
+                               th:href="@{/ventas(lote=${lote.idLote})}"
+                               class="btn-sm btn-alerta">Priorizar salida</a>
+                            <a th:if="${lote.diasRestantes > 30}"
+                               th:href="@{/lotes(id=${lote.idLote})}"
+                               class="btn-sm btn-editar">Ver lote</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(lotesVencimiento)}">
+                        <td colspan="6">
+                            <p class="tabla-vacia">
+                                No hay lotes registrados para mostrar en el control de vencimientos.
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Fragmento: Footer -->
+    <footer th:replace="~{fragmentos :: footer}"></footer>
+
+</body>
+</html>
