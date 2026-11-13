@@ -21,7 +21,7 @@ El navegador solo recibe HTML y CSS. Cada acción (buscar, guardar, vender) es u
 ## Estructura del proyecto
 
 ```
-farmacia-oasis/
+Proyecto-oasis-/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/farmaciaoasis/
@@ -34,7 +34,7 @@ farmacia-oasis/
 │   │   │   │   ├── Categoria.java
 │   │   │   │   ├── Producto.java
 │   │   │   │   ├── Proveedor.java
-│   │   │   │   ├── Lote.java
+│   │   │   │   ├── Lote.java                    # incluye la regla de vencimientos
 │   │   │   │   ├── Venta.java
 │   │   │   │   └── DetalleVenta.java
 │   │   │   ├── repository/                      # acceso a datos (Spring Data JPA)
@@ -57,36 +57,57 @@ farmacia-oasis/
 │   │   │       └── VentaController.java
 │   │   └── resources/
 │   │       ├── templates/                       # vistas Thymeleaf (.html)
+│   │       │   ├── fragmentos.html              # <head> y menú que se repiten en todas las páginas
 │   │       │   ├── login.html
 │   │       │   ├── dashboard.html
-│   │       │   ├── productos/
-│   │       │   ├── lotes/
-│   │       │   ├── vencimientos/
-│   │       │   └── ventas/
+│   │       │   ├── productos/lista.html
+│   │       │   ├── lotes/lista.html
+│   │       │   ├── vencimientos/lista.html
+│   │       │   └── ventas/lista.html
 │   │       ├── static/
 │   │       │   └── css/
 │   │       │       └── estilos.css
 │   │       └── application.properties           # conexión a MySQL
-│   └── test/java/com/farmaciaoasis/             # pruebas
+│   └── test/java/com/farmaciaoasis/
+│       └── model/LoteTest.java                  # prueba de la regla de vencimientos
 ├── bd/
 │   └── farmacia_oasis.sql                       # script de creación de la base de datos
 ├── docs/
-│   └── MicroERP-Contexto.md                     # documento de contexto del proyecto
+│   ├── modelo_entidad_relacion.png
+│   └── modelo_relacional.png
+├── .gitignore
 ├── pom.xml                                       # dependencias (Maven)
 └── README.md
 ```
 
 ## Cómo ejecutar
 
+Se necesita Java 17 o superior, Maven y MySQL 8.
+
 1. Crear la base de datos corriendo el script `bd/farmacia_oasis.sql` en MySQL.
-2. Configurar el usuario y la contraseña de MySQL en `src/main/resources/application.properties`.
+2. El proyecto se conecta a MySQL con el usuario `root` sin contraseña. Si tu MySQL usa otros datos, crea en la raíz del proyecto un archivo `application-local.properties` (no se sube al repositorio) con:
+
+   ```
+   spring.datasource.username=tu_usuario
+   spring.datasource.password=tu_clave
+   ```
+
 3. Desde la carpeta del proyecto: `mvn spring-boot:run`.
 4. Abrir en el navegador: `http://localhost:8080`.
+
+Para correr las pruebas: `mvn test`.
 
 ## Usuarios
 
 - **Administrador:** gestiona productos, lotes y proveedores (registra la mercancía que ingresa).
 - **Cajero:** registra las ventas.
+
+El script de la base de datos crea dos usuarios de prueba:
+
+| Rol | Correo | Contraseña |
+|---|---|---|
+| Administrador | `admin@farmaciaoasis.com` | `admin123` |
+| Cajero | `cajero@farmaciaoasis.com` | `cajero123` |
 
 ## Integrantes
 

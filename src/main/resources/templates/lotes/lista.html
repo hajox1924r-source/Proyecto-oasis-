@@ -24,13 +24,14 @@
             <h2>Registrar entrada de lote</h2>
             <form method="post"
                   th:action="@{/lotes/guardar}"
-                  th:object="${nuevoLote}"
-                  class="form-oasis">
+                  class="form-oasis"
+                  th:with="prods=${listaProductos != null ? listaProductos : productos},
+                           provs=${listaProveedores != null ? listaProveedores : proveedores}">
                 <div class="form-group">
                     <label for="producto">Producto</label>
-                    <select id="producto" th:field="*{producto}" class="form-control" required>
+                    <select id="producto" name="producto" class="form-control" required>
                         <option value="">Seleccione un producto...</option>
-                        <option th:each="prod : ${listaProductos}"
+                        <option th:each="prod : ${prods}"
                                 th:value="${prod.id}"
                                 th:text="${prod.nombre}">Acetaminofén</option>
                     </select>
@@ -38,19 +39,19 @@
 
                 <div class="form-group">
                     <label for="proveedor">Proveedor</label>
-                    <select id="proveedor" th:field="*{proveedor}" class="form-control" required>
+                    <select id="proveedor" name="proveedor" class="form-control" required>
                         <option value="">Seleccione un proveedor...</option>
-                        <option th:each="prov : ${listaProveedores}"
+                        <option th:each="prov : ${provs}"
                                 th:value="${prov.id}"
                                 th:text="${prov.nombre}">Distribuidora Oasis</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="codigoLote">Código de Lote</label>
+                    <label for="numeroLote">Código / Número de Lote</label>
                     <input type="text"
-                           id="codigoLote"
-                           th:field="*{codigoLote}"
+                           id="numeroLote"
+                           name="numeroLote"
                            class="form-control"
                            placeholder="Ej. LOT-2026-001"
                            required>
@@ -60,7 +61,7 @@
                     <label for="cantidad">Cantidad recibida</label>
                     <input type="number"
                            id="cantidad"
-                           th:field="*{cantidad}"
+                           name="cantidad"
                            class="form-control"
                            min="1"
                            placeholder="1"
@@ -71,7 +72,7 @@
                     <label for="fechaVencimiento">Fecha de Vencimiento</label>
                     <input type="date"
                            id="fechaVencimiento"
-                           th:field="*{fechaVencimiento}"
+                           name="fechaVencimiento"
                            class="form-control"
                            required>
                 </div>
@@ -92,6 +93,7 @@
                         <th>Código Lote</th>
                         <th>Producto</th>
                         <th>Proveedor</th>
+                        <th>Fecha Ingreso</th>
                         <th class="numero">Cantidad</th>
                         <th>Fecha Vencimiento</th>
                         <th>Estado</th>
@@ -99,9 +101,10 @@
                 </thead>
                 <tbody>
                     <tr th:each="lote : ${lotes}">
-                        <td th:text="${lote.codigoLote}">A-1001</td>
+                        <td th:text="${lote.numeroLote}">A-1001</td>
                         <td th:text="${lote.producto != null} ? ${lote.producto.nombre} : 'Sin producto'">Acetaminofén</td>
                         <td th:text="${lote.proveedor != null} ? ${lote.proveedor.nombre} : 'Sin proveedor'">Proveedor</td>
+                        <td th:text="${lote.fechaIngreso != null} ? ${#temporals.format(lote.fechaIngreso, 'dd/MM/yyyy')} : '-'">01/01/2026</td>
                         <td class="numero" th:text="${lote.cantidad}">40</td>
                         <td th:text="${lote.fechaVencimiento != null} ? ${#temporals.format(lote.fechaVencimiento, 'dd/MM/yyyy')} : '-'">01/01/2027</td>
                         <td>
@@ -110,8 +113,8 @@
                                   th:text="${lote.estado}">VIGENTE</span>
                         </td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(lotes)}">
-                        <td colspan="6">
+                    <tr th:if="${lotes == null or #lists.isEmpty(lotes)}">
+                        <td colspan="7">
                             <p class="tabla-vacia">
                                 No hay lotes registrados para mostrar.
                             </p>

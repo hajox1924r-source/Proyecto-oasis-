@@ -19,7 +19,7 @@
                 <input type="text"
                        name="buscar"
                        th:value="${buscar} ?: ${param.buscar}"
-                       placeholder="Buscar producto por nombre, concentración o categoría..."
+                       placeholder="Buscar producto por nombre, presentación o categoría..."
                        aria-label="Buscar producto">
                 <button type="submit" class="btn-secundario">Buscar</button>
             </form>
@@ -34,30 +34,39 @@
                 <summary>Registrar nuevo medicamento</summary>
                 <form method="post"
                       th:action="@{/productos/guardar}"
-                      th:object="${nuevoProducto}"
                       class="form-oasis">
+                    <div class="form-group">
+                        <label for="codigo">Código</label>
+                        <input type="text"
+                               id="codigo"
+                               name="codigo"
+                               class="form-control"
+                               placeholder="Ej. MED-001"
+                               required>
+                    </div>
+
                     <div class="form-group">
                         <label for="nombre">Nombre del medicamento</label>
                         <input type="text"
                                id="nombre"
-                               th:field="*{nombre}"
+                               name="nombre"
                                class="form-control"
                                placeholder="Ej. Acetaminofén"
                                required>
                     </div>
 
                     <div class="form-group">
-                        <label for="presentacion">Concentración / Presentación</label>
+                        <label for="presentacion">Presentación / Concentración</label>
                         <input type="text"
                                id="presentacion"
-                               th:field="*{presentacion}"
+                               name="presentacion"
                                class="form-control"
-                               placeholder="Ej. 500 mg - Tabletas">
+                               placeholder="Ej. Tableta 500 mg x 10">
                     </div>
 
                     <div class="form-group">
                         <label for="categoria">Categoría</label>
-                        <select id="categoria" th:field="*{categoria}" class="form-control">
+                        <select id="categoria" name="categoria" class="form-control">
                             <option value="">Seleccione una categoría...</option>
                             <option th:each="cat : ${categorias}"
                                     th:value="${cat.id}"
@@ -66,12 +75,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="precio">Precio de venta</label>
+                        <label for="precioVenta">Precio de venta</label>
                         <input type="number"
-                               id="precio"
+                               id="precioVenta"
+                               name="precioVenta"
                                step="0.01"
                                min="0"
-                               th:field="*{precio}"
                                class="form-control"
                                placeholder="0.00"
                                required>
@@ -90,31 +99,29 @@
             <table class="tabla-oasis">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Concentración</th>
+                        <th>Código</th>
+                        <th>Medicamento</th>
+                        <th>Presentación</th>
                         <th>Categoría</th>
                         <th class="numero">Precio Venta</th>
-                        <th class="numero">Stock Total</th>
                         <th sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="producto : ${productos}">
-                        <td th:text="${producto.id}">1</td>
+                        <td th:text="${producto.codigo}">MED-001</td>
                         <td th:text="${producto.nombre}">Acetaminofén</td>
-                        <td th:text="${producto.concentracion}">500 mg</td>
+                        <td th:text="${producto.presentacion}">Tableta 500 mg x 10</td>
                         <td th:text="${producto.categoria != null} ? ${producto.categoria.nombre} : 'Sin categoría'">Analgésicos</td>
                         <td class="numero"
                             th:text="${producto.precioVenta != null ? '$ ' + #numbers.formatDecimal(producto.precioVenta, 1, 'POINT', 0, 'COMMA') : '$ 0'}">$ 3.500</td>
-                        <td class="numero" th:text="${producto.stockTotal} ?: 0">48</td>
                         <td sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">
                             <a th:href="@{/productos/editar/{id}(id=${producto.id})}"
                                class="btn-sm btn-editar">Ver / Editar</a>
                         </td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(productos)}">
-                        <td colspan="7">
+                    <tr th:if="${productos == null or #lists.isEmpty(productos)}">
+                        <td colspan="6">
                             <p class="tabla-vacia">
                                 No se encontraron productos registrados para mostrar.
                             </p>

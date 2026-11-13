@@ -1,0 +1,14 @@
+# Compilación
+target/
+
+# Configuración local de cada integrante (usuario y clave de MySQL)
+application-local.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+nbproject/

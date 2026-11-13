@@ -34,12 +34,12 @@
 
             <div class="card-kpi kpi-alerta">
                 <h3>Medicamentos Próximos a Vencer</h3>
-                <p class="kpi-valor" th:text="${medicamentosPorVencer} ?: '0'">0</p>
+                <p class="kpi-valor" th:text="${medicamentosPorVencer != null ? medicamentosPorVencer : (proximos ?: '0')}">0</p>
             </div>
 
             <div class="card-kpi kpi-peligro">
                 <h3>Medicamentos Vencidos Críticos</h3>
-                <p class="kpi-valor" th:text="${medicamentosVencidos} ?: '0'">0</p>
+                <p class="kpi-valor" th:text="${medicamentosVencidos != null ? medicamentosVencidos : (vencidos ?: '0')}">0</p>
             </div>
         </section>
 

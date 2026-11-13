@@ -39,137 +39,15 @@
                                 th:value="${lote.idLote}"
                                 th:selected="${(loteId != null and loteId == lote.idLote) or (param.lote != null and !#arrays.isEmpty(param.lote) and param.lote[0] == #strings.toString(lote.idLote))}"
                                 th:text="${(lote.producto != null ? lote.producto.nombre : 'Sin medicamento')
-                                          + (lote.producto != null and lote.producto.presentacion != null ? ' (' + lote.producto.presentacion + ')' : '')
-                                          + ' - Lote: ' + (lote.numeroLote ?: '-')
-                                          + ' | Stock: ' + lote.cantidad
-                                          + (lote.fechaVencimiento != null ? ' | Vence: ' + #temporals.format(lote.fechaVencimiento, 'dd/MM/yyyy') : '')
-                                          + (lote.producto != null and lote.producto.precioVenta != null ? ' | $ ' + #numbers.formatDecimal(lote.producto.precioVenta, 1, 'POINT', 0, 'COMMA') : '')}">
+                                         + (lote.producto != null and lote.producto.presentacion != null ? ' (' + lote.producto.presentacion + ')' : '')
+                                         + ' - Lote: ' + (lote.numeroLote ?: '-')
+                                         + ' | Stock: ' + lote.cantidad
+                                         + (lote.fechaVencimiento != null ? ' | Vence: ' + #temporals.format(lote.fechaVencimiento, 'dd/MM/yyyy') : '')
+                                         + (lote.producto != null and lote.producto.precioVenta != null ? ' | $ ' + #numbers.formatDecimal(lote.producto.precioVenta, 1, 'POINT', 0, 'COMMA') : '')}">
                             Acetaminofén (500 mg) - Lote: A-1001 | Stock: 20 | Vence: 15/12/2026 | $ 3.500
                         </option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="cantidad">Cantidad a vender</label>
-                    <input type="number"
-                           id="cantidad"
-                           name="cantidad"
-                           class="form-control"
-                           min="1"
-                           value="1"
-                           placeholder="1"
-                           required>
-                </div>
-
-                <div class="form-acciones">
-                    <button type="submit" class="btn-primario">Agregar a la venta</button>
-                    <button type="reset" class="btn-secundario">Limpiar</button>
-                </div>
-            </form>
-        </section>
-
-        <!-- Detalle de la venta actual / carrito -->
-        <section class="contenido-tabla"
-                 th:with="itemsCarrito=${carrito != null ? carrito : (detalles != null ? detalles : (ventaActual != null ? ventaActual.detalles : null))},
-                          totalGeneral=${totalVenta != null ? totalVenta : (total != null ? total : (ventaActual != null and ventaActual.total != null ? ventaActual.total : 0))}">
-            <h2>Detalle de la venta actual</h2>
-            <table class="tabla-oasis">
-                <thead>
-                    <tr>
-                        <th>Medicamento</th>
-                        <th class="numero">Cantidad</th>
-                        <th class="numero">Precio Unitario</th>
-                        <th class="numero">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="item : ${itemsCarrito}">
-                        <td th:text="${item.lote != null and item.lote.producto != null ? item.lote.producto.nombre + (item.lote.numeroLote != null ? ' (Lote: ' + item.lote.numeroLote + ')' : '') : 'Sin medicamento'}">
-                            Acetaminofén (Lote: A-1001)
-                        </td>
-                        <td class="numero" th:text="${item.cantidad}">2</td>
-                        <td class="numero"
-                            th:with="precio=${item.precioUnitario != null ? item.precioUnitario : (item.lote != null and item.lote.producto != null and item.lote.producto.precioVenta != null ? item.lote.producto.precioVenta : 0)}"
-                            th:text="'$ ' + ${#numbers.formatDecimal(precio, 1, 'POINT', 0, 'COMMA')}">
-                            $ 3.500
-                        </td>
-                        <td class="numero"
-                            th:with="sub=${item.subtotal != null ? item.subtotal : 0}"
-                            th:text="'$ ' + ${#numbers.formatDecimal(sub, 1, 'POINT', 0, 'COMMA')}">
-                            $ 7.000
-                        </td>
-                    </tr>
-                    <tr th:if="${itemsCarrito == null or #lists.isEmpty(itemsCarrito)}">
-                        <td colspan="4">
-                            <p class="tabla-vacia">
-                                No hay medicamentos agregados a la venta actual.
-                            </p>
-                        </td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr class="total-factura">
-                        <td colspan="3"><strong>Total General</strong></td>
-                        <td class="numero">
-                            <strong th:text="'$ ' + ${#numbers.formatDecimal(totalGeneral, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
-
-            <div class="form-acciones">
-                <form method="post" th:action="@{/ventas/confirmar}">
-                    <button type="submit"
-                            class="btn-primario"
-                            th:disabled="${itemsCarrito == null or #lists.isEmpty(itemsCarrito)}">
-                        Confirmar y registrar venta
-                    </button>
-                </form>
-                <form method="post"
-                      th:action="@{/ventas/limpiar}"
-                      th:if="${itemsCarrito != null and !#lists.isEmpty(itemsCarrito)}">
-                    <button type="submit" class="btn-secundario">Cancelar venta actual</button>
-                </form>
-            </div>
-        </section>
-
-        <!-- Historial inferior: Últimas ventas registradas del día -->
-        <section class="contenido-tabla"
-                 th:with="listaVentas=${ventasDelDia != null ? ventasDelDia : ventas}">
-            <h2>Últimas ventas registradas del día</h2>
-            <table class="tabla-oasis">
-                <thead>
-                    <tr>
-                        <th>ID Venta</th>
-                        <th>Fecha</th>
-                        <th>Cajero</th>
-                        <th class="numero">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="v : ${listaVentas}">
-                        <td th:text="${v.idVenta}">1</td>
-                        <td th:text="${v.fecha != null} ? ${#temporals.format(v.fecha, 'dd/MM/yyyy HH:mm')} : '-'">13/11/2026 09:15</td>
-                        <td th:text="${v.cajero != null} ? ${v.cajero.nombre} : 'Sin cajero'">Cajero</td>
-                        <td class="numero"
-                            th:text="${v.total != null} ? '$ ' + ${#numbers.formatDecimal(v.total, 1, 'POINT', 0, 'COMMA')} : '$ 0'">
-                            $ 11.500
-                        </td>
-                    </tr>
-                    <tr th:if="${listaVentas == null or #lists.isEmpty(listaVentas)}">
-                        <td colspan="4">
-                            <p class="tabla-vacia">
-                                No hay ventas registradas del día para mostrar.
-                            </p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
-
-    <!-- Fragmento: Footer -->
-    <footer th:replace="~{fragmentos :: footer}"></footer>
-
-</body>
-</html>
+                    <label for="cantidad
