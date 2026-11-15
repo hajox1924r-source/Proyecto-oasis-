@@ -1,20 +1,4 @@
-/* =====================================================================
-   Farmacia Oasis - Hoja de estilos (CSS puro, sin JavaScript)
-
-   1. Paleta y variables        8. Mensajes
-   2. Base                      9. Dashboard
-   3. Estructura general       10. Tablas
-   4. Barra lateral            11. Estados de vencimiento
-   5. Encabezados de página    12. Inicio de sesión
-   6. Botones                  13. Pie de página
-   7. Formularios              14. Pantallas pequeñas
-   ===================================================================== */
-
-
-/* ---------- 1. Paleta y variables ---------- */
-
 :root {
-    /* Azules */
     --azul-marino: #0A2A4D;
     --azul-noche: #0A3B66;
     --azul-profundo: #0B4F8A;
@@ -23,7 +7,6 @@
     --azul-claro: #DDEFFA;
     --azul-suave: #EEF6FD;
 
-    /* Cálidos y neutros */
     --coral: #F26B4F;
     --crema: #FFF9F3;
     --blanco: #FFFFFF;
@@ -32,7 +15,6 @@
     --borde: #EADFD3;
     --borde-campo: #7D8FA6;
 
-    /* Estados de vencimiento: color de texto, fondo y marca */
     --vencido: #B42318;
     --vencido-fondo: #FDE7E4;
     --vencido-marca: #E5484D;
@@ -42,7 +24,6 @@
     --vigente: #0A5E7A;
     --vigente-fondo: #D3F0F8;
 
-    /* Degradados */
     --degradado-fondo: linear-gradient(180deg, #0A2A4D 0%, #124473 16%, #DDEFFA 50%, #FFFFFF 100%);
     --degradado-barra: linear-gradient(180deg, #0B4F8A 0%, #1768B5 100%);
     --degradado-banner: linear-gradient(120deg, #0B4F8A 0%, #1768B5 65%, #22B8E0 100%);
@@ -52,9 +33,6 @@
     --radio-boton: 6px;
     --sombra: 0 2px 8px rgba(10, 42, 77, 0.12);
 }
-
-
-/* ---------- 2. Base ---------- */
 
 * {
     box-sizing: border-box;
@@ -80,7 +58,6 @@ h3 {
     line-height: 1.2;
 }
 
-/* Marca de foco visible al navegar con el teclado */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -90,10 +67,6 @@ summary:focus-visible {
     outline-offset: 2px;
 }
 
-
-/* ---------- 3. Estructura general ---------- */
-
-/* Barra lateral a la izquierda; contenido y pie a la derecha */
 body {
     display: grid;
     grid-template-columns: 240px minmax(0, 1fr);
@@ -112,13 +85,9 @@ main {
     padding: 24px;
 }
 
-/* El contenedor de mensajes no ocupa espacio cuando no hay mensajes */
 main > div:not([class]) {
     display: contents;
 }
-
-
-/* ---------- 4. Barra lateral ---------- */
 
 .sidebar {
     grid-area: barra;
@@ -164,7 +133,6 @@ main > div:not([class]) {
     background: var(--azul-noche);
 }
 
-/* El botón de cerrar sesión queda al final de la barra */
 .sidebar form {
     margin-top: auto;
     padding: 0 8px;
@@ -174,9 +142,6 @@ main > div:not([class]) {
     width: 100%;
     text-align: left;
 }
-
-
-/* ---------- 5. Encabezados de página ---------- */
 
 .bienvenida,
 .barra-superior {
@@ -206,9 +171,6 @@ main > div:not([class]) {
     margin: 6px 0 0;
     font-size: 0.95rem;
 }
-
-
-/* ---------- 6. Botones ---------- */
 
 .btn-primario,
 .btn-secundario,
@@ -261,7 +223,6 @@ main > div:not([class]) {
     border-color: var(--azul-claro);
 }
 
-/* Filtro seleccionado en la página de vencimientos */
 .btn-filtro.activo {
     color: var(--blanco);
     background: var(--azul-marino);
@@ -273,7 +234,6 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* Botones pequeños dentro de las tablas */
 .btn-sm {
     padding: 11px 12px;
     font-size: 0.85rem;
@@ -299,7 +259,6 @@ button:disabled {
     background: var(--blanco);
 }
 
-/* Sobre los paneles azules los botones cambian para que se distingan del fondo */
 .contenido-tabla .btn-primario {
     color: var(--azul-profundo);
     background: var(--crema);
@@ -319,9 +278,6 @@ button:disabled {
     background: var(--azul-noche);
 }
 
-
-/* ---------- 7. Formularios ---------- */
-
 .bloque-registro {
     padding: 20px;
     border: 1px solid var(--borde);
@@ -336,7 +292,6 @@ button:disabled {
     color: var(--azul-profundo);
 }
 
-/* Formulario plegable (details/summary), sin JavaScript */
 .bloque-registro summary {
     font-size: 1.1rem;
     font-weight: 700;
@@ -355,7 +310,6 @@ button:disabled {
     gap: 14px;
 }
 
-/* En ventas, la lista de lotes tiene textos largos: ocupa dos columnas cuando hay espacio */
 @media (min-width: 1000px) {
     .form-group:has(> #loteId) {
         grid-column: span 2;
@@ -393,7 +347,6 @@ label {
     gap: 12px;
 }
 
-/* Buscador de la página de productos */
 .form-busqueda {
     display: flex;
     flex: 1 1 320px;
@@ -407,15 +360,11 @@ label {
     border-color: var(--blanco);
 }
 
-/* Filtros rápidos de la página de vencimientos */
 .filtros-vencimientos {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
-
-
-/* ---------- 8. Mensajes ---------- */
 
 .alerta-exito,
 .alerta-error {
@@ -433,9 +382,6 @@ label {
     color: var(--vencido);
     background: var(--vencido-fondo);
 }
-
-
-/* ---------- 9. Dashboard ---------- */
 
 .grid-dashboard {
     display: grid;
@@ -529,10 +475,6 @@ label {
     color: var(--texto-secundario);
 }
 
-
-/* ---------- 10. Tablas ---------- */
-
-/* Panel azul que contiene la tabla; si la tabla no cabe, se desplaza dentro del panel */
 .contenido-tabla {
     overflow-x: auto;
     border: 1px solid var(--azul-noche);
@@ -570,7 +512,6 @@ label {
     background: var(--azul-noche);
 }
 
-/* La primera columna (códigos y nombres) no se parte en dos líneas */
 .tabla-oasis tbody td:first-child {
     white-space: nowrap;
 }
@@ -595,17 +536,12 @@ label {
     color: var(--azul-claro);
 }
 
-/* Fila del total en la factura */
 .tabla-oasis .total-factura td {
     border-bottom: 0;
     font-size: 1.05rem;
     background: var(--azul-noche);
 }
 
-
-/* ---------- 11. Estados de vencimiento ---------- */
-
-/* Etiquetas: el estado siempre va escrito, el color solo lo refuerza */
 .estado,
 .badge {
     display: inline-block;
@@ -634,7 +570,6 @@ label {
     background: var(--vigente-fondo);
 }
 
-/* Marca de color al inicio de cada fila en el control de vencimientos */
 tr.estado-vencido td:first-child {
     box-shadow: inset 4px 0 0 var(--vencido-marca);
 }
@@ -646,9 +581,6 @@ tr.estado-por-vencer td:first-child {
 tr.estado-vigente td:first-child {
     box-shadow: inset 4px 0 0 var(--cian);
 }
-
-
-/* ---------- 12. Inicio de sesión ---------- */
 
 .pagina-login {
     display: flex;
@@ -670,7 +602,6 @@ tr.estado-vigente td:first-child {
     box-shadow: var(--sombra);
 }
 
-/* Franja de color en la parte superior de la tarjeta */
 .login-card::before {
     content: "";
     display: block;
@@ -685,7 +616,6 @@ tr.estado-vigente td:first-child {
     color: var(--azul-profundo);
 }
 
-/* Título con degradado, solo en navegadores que lo soportan */
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
     .login-card h1 {
         color: transparent;
@@ -715,9 +645,6 @@ tr.estado-vigente td:first-child {
     margin-top: 6px;
 }
 
-
-/* ---------- 13. Pie de página ---------- */
-
 body > footer {
     grid-area: pie;
     padding: 16px 24px;
@@ -731,11 +658,7 @@ body > footer p {
     margin: 2px 0;
 }
 
-
-/* ---------- 14. Pantallas pequeñas ---------- */
-
 @media (max-width: 800px) {
-    /* La barra lateral pasa arriba y el menú se acomoda en filas */
     body {
         grid-template-columns: minmax(0, 1fr);
         grid-template-rows: auto 1fr auto;
@@ -775,7 +698,6 @@ body > footer p {
         padding: 16px;
     }
 
-    /* En pantallas angostas el texto ocupa todo el ancho: se quita el cian para que se lea bien */
     .bienvenida,
     .barra-superior {
         padding: 20px;
