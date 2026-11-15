@@ -1,214 +1,793 @@
-/* Estilos del aplicativo (CSS puro, sin JavaScript) */
+/* =====================================================================
+   Farmacia Oasis - Hoja de estilos (CSS puro, sin JavaScript)
+
+   1. Paleta y variables        8. Mensajes
+   2. Base                      9. Dashboard
+   3. Estructura general       10. Tablas
+   4. Barra lateral            11. Estados de vencimiento
+   5. Encabezados de página    12. Inicio de sesión
+   6. Botones                  13. Pie de página
+   7. Formularios              14. Pantallas pequeñas
+   ===================================================================== */
+
+
+/* ---------- 1. Paleta y variables ---------- */
 
 :root {
-    --verde: #1b7f5c;
-    --verde-oscuro: #14604a;
-    --fondo: #f4f7f6;
-    --texto: #1f2a2e;
-    --borde: #d6dedb;
-    --rojo: #b3261e;
-    --rojo-fondo: #fde8e6;
-    --ambar: #8a5a00;
-    --ambar-fondo: #fff1d1;
-    --ok-fondo: #dff3ea;
+    /* Azules */
+    --azul-marino: #0A2A4D;
+    --azul-noche: #0A3B66;
+    --azul-profundo: #0B4F8A;
+    --azul-confianza: #1768B5;
+    --cian: #22B8E0;
+    --azul-claro: #DDEFFA;
+    --azul-suave: #EEF6FD;
+
+    /* Cálidos y neutros */
+    --coral: #F26B4F;
+    --crema: #FFF9F3;
+    --blanco: #FFFFFF;
+    --texto: #1A2B3C;
+    --texto-secundario: #5A6676;
+    --borde: #EADFD3;
+    --borde-campo: #7D8FA6;
+
+    /* Estados de vencimiento: color de texto, fondo y marca */
+    --vencido: #B42318;
+    --vencido-fondo: #FDE7E4;
+    --vencido-marca: #E5484D;
+    --proximo: #9A4A00;
+    --proximo-fondo: #FFEDC2;
+    --proximo-marca: #F5A524;
+    --vigente: #0A5E7A;
+    --vigente-fondo: #D3F0F8;
+
+    /* Degradados */
+    --degradado-fondo: linear-gradient(180deg, #0A2A4D 0%, #124473 16%, #DDEFFA 50%, #FFFFFF 100%);
+    --degradado-barra: linear-gradient(180deg, #0B4F8A 0%, #1768B5 100%);
+    --degradado-banner: linear-gradient(120deg, #0B4F8A 0%, #1768B5 65%, #22B8E0 100%);
+    --degradado-boton: linear-gradient(90deg, #0B4F8A 0%, #1768B5 100%);
+
+    --radio: 8px;
+    --radio-boton: 6px;
+    --sombra: 0 2px 8px rgba(10, 42, 77, 0.12);
 }
+
+
+/* ---------- 2. Base ---------- */
 
 * {
     box-sizing: border-box;
 }
 
+html {
+    min-height: 100%;
+}
+
 body {
     margin: 0;
+    min-height: 100vh;
     font-family: system-ui, "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.45;
     color: var(--texto);
-    background: var(--fondo);
+    background: var(--degradado-fondo);
+}
+
+h1,
+h2,
+h3 {
+    line-height: 1.2;
+}
+
+/* Marca de foco visible al navegar con el teclado */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+    outline: 3px solid var(--coral);
+    outline-offset: 2px;
+}
+
+
+/* ---------- 3. Estructura general ---------- */
+
+/* Barra lateral a la izquierda; contenido y pie a la derecha */
+body {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+        "barra contenido"
+        "barra pie";
 }
 
 main {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 24px 16px;
-}
-
-h1 {
-    margin-top: 0;
-}
-
-/* ----- Menú superior ----- */
-
-.menu {
+    grid-area: contenido;
+    min-width: 0;
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 16px;
-    background: var(--verde);
-    color: #fff;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px;
 }
 
-.menu a {
-    color: #fff;
+/* El contenedor de mensajes no ocupa espacio cuando no hay mensajes */
+main > div:not([class]) {
+    display: contents;
+}
+
+
+/* ---------- 4. Barra lateral ---------- */
+
+.sidebar {
+    grid-area: barra;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px 16px;
+    color: var(--blanco);
+    background: var(--degradado-barra);
+}
+
+.sidebar::before {
+    content: "Farmacia Oasis";
+    padding: 0 8px;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.sidebar ul {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.nav-link {
+    display: block;
+    padding: 11px 12px;
+    border-radius: var(--radio-boton);
+    color: var(--blanco);
     text-decoration: none;
 }
 
-.menu nav {
+.nav-link:hover,
+.nav-link:focus-visible {
+    background: var(--azul-noche);
+}
+
+/* El botón de cerrar sesión queda al final de la barra */
+.sidebar form {
+    margin-top: auto;
+    padding: 0 8px;
+}
+
+.btn-logout {
+    width: 100%;
+    text-align: left;
+}
+
+
+/* ---------- 5. Encabezados de página ---------- */
+
+.bienvenida,
+.barra-superior {
+    padding: 24px;
+    border-radius: var(--radio);
+    color: var(--blanco);
+    background: var(--degradado-banner);
+}
+
+.barra-superior {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
-    flex: 1;
-}
-
-.menu nav a:hover {
-    text-decoration: underline;
-}
-
-.marca {
-    font-weight: bold;
-    font-size: 1.1rem;
-}
-
-.sesion {
-    display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 16px;
 }
 
-/* ----- Botones y formularios ----- */
+.bienvenida h1,
+.barra-superior h1 {
+    margin: 0;
+    font-size: 1.75rem;
+}
 
-button {
-    padding: 8px 14px;
-    border: 0;
-    border-radius: 6px;
-    background: var(--verde-oscuro);
-    color: #fff;
+.bienvenida p,
+.barra-superior p {
+    max-width: 60ch;
+    margin: 6px 0 0;
+    font-size: 0.95rem;
+}
+
+
+/* ---------- 6. Botones ---------- */
+
+.btn-primario,
+.btn-secundario,
+.btn-logout,
+.btn-filtro,
+.btn-sm {
+    display: inline-block;
+    min-height: 44px;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: var(--radio-boton);
     font: inherit;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
     cursor: pointer;
 }
 
-label {
-    display: block;
-    margin: 12px 0 4px;
+.btn-primario {
+    color: var(--blanco);
+    background: var(--degradado-boton);
 }
 
-input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid var(--borde);
-    border-radius: 6px;
-    font: inherit;
+.btn-primario:hover {
+    background: var(--azul-noche);
 }
 
-/* ----- Tarjetas ----- */
+.btn-secundario {
+    color: var(--azul-profundo);
+    background: var(--blanco);
+    border-color: var(--azul-profundo);
+}
 
-.tarjeta {
-    background: #fff;
-    border: 1px solid var(--borde);
-    border-radius: 8px;
+.btn-secundario:hover {
+    background: var(--azul-suave);
+}
+
+.btn-logout,
+.btn-filtro,
+.barra-superior .btn-secundario {
+    color: var(--azul-profundo);
+    background: var(--crema);
+    border-color: var(--crema);
+}
+
+.btn-logout:hover,
+.btn-filtro:hover,
+.barra-superior .btn-secundario:hover {
+    background: var(--azul-claro);
+    border-color: var(--azul-claro);
+}
+
+/* Filtro seleccionado en la página de vencimientos */
+.btn-filtro.activo {
+    color: var(--blanco);
+    background: var(--azul-marino);
+    border-color: var(--blanco);
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Botones pequeños dentro de las tablas */
+.btn-sm {
+    padding: 11px 12px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.btn-editar {
+    color: var(--azul-profundo);
+    background: var(--crema);
+}
+
+.btn-peligro {
+    color: var(--vencido);
+    background: var(--vencido-fondo);
+}
+
+.btn-alerta {
+    color: var(--proximo);
+    background: var(--proximo-fondo);
+}
+
+.btn-sm:hover {
+    background: var(--blanco);
+}
+
+/* Sobre los paneles azules los botones cambian para que se distingan del fondo */
+.contenido-tabla .btn-primario {
+    color: var(--azul-profundo);
+    background: var(--crema);
+}
+
+.contenido-tabla .btn-primario:hover {
+    background: var(--azul-claro);
+}
+
+.contenido-tabla .btn-secundario {
+    color: var(--blanco);
+    background: transparent;
+    border-color: var(--blanco);
+}
+
+.contenido-tabla .btn-secundario:hover {
+    background: var(--azul-noche);
+}
+
+
+/* ---------- 7. Formularios ---------- */
+
+.bloque-registro {
     padding: 20px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    background: var(--blanco);
+    box-shadow: var(--sombra);
 }
 
-.resumen {
+.bloque-registro h2 {
+    margin: 0 0 16px;
+    font-size: 1.1rem;
+    color: var(--azul-profundo);
+}
+
+/* Formulario plegable (details/summary), sin JavaScript */
+.bloque-registro summary {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--azul-profundo);
+    cursor: pointer;
+    padding: 9px 0;
+}
+
+.bloque-registro details[open] summary {
+    margin-bottom: 8px;
+}
+
+.form-oasis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+}
+
+/* En ventas, la lista de lotes tiene textos largos: ocupa dos columnas cuando hay espacio */
+@media (min-width: 1000px) {
+    .form-group:has(> #loteId) {
+        grid-column: span 2;
+    }
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+label {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.form-control,
+.form-busqueda input,
+.login-card input {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px;
+    border: 1px solid var(--borde-campo);
+    border-radius: var(--radio-boton);
+    font: inherit;
+    color: var(--texto);
+    background: var(--blanco);
+}
+
+.form-acciones {
+    grid-column: 1 / -1;
     display: flex;
     flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* Buscador de la página de productos */
+.form-busqueda {
+    display: flex;
+    flex: 1 1 320px;
+    gap: 8px;
+    max-width: 520px;
+}
+
+.form-busqueda input {
+    flex: 1;
+    min-width: 0;
+    border-color: var(--blanco);
+}
+
+/* Filtros rápidos de la página de vencimientos */
+.filtros-vencimientos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+
+/* ---------- 8. Mensajes ---------- */
+
+.alerta-exito,
+.alerta-error {
+    padding: 10px 14px;
+    border-radius: var(--radio-boton);
+    font-weight: 600;
+}
+
+.alerta-exito {
+    color: var(--vigente);
+    background: var(--vigente-fondo);
+}
+
+.alerta-error {
+    color: var(--vencido);
+    background: var(--vencido-fondo);
+}
+
+
+/* ---------- 9. Dashboard ---------- */
+
+.grid-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
 }
 
-.resumen .tarjeta {
-    flex: 1;
-    min-width: 220px;
-    color: inherit;
-    text-decoration: none;
+.card-kpi {
+    padding: 20px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    background: linear-gradient(180deg, var(--blanco) 0%, var(--azul-suave) 100%);
+    box-shadow: var(--sombra);
 }
 
-.resumen strong {
-    display: block;
+.card-kpi h3 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--texto-secundario);
+}
+
+.kpi-valor {
+    margin: 4px 0 0;
     font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--azul-profundo);
 }
 
-/* ----- Inicio de sesión ----- */
+.kpi-alerta {
+    background: linear-gradient(180deg, var(--blanco) 0%, #FFF6DD 100%);
+}
+
+.kpi-alerta .kpi-valor {
+    color: var(--proximo);
+}
+
+.kpi-peligro {
+    background: linear-gradient(180deg, var(--blanco) 0%, #FDF3F1 100%);
+}
+
+.kpi-peligro .kpi-valor {
+    color: var(--vencido);
+}
+
+.accesos-rapidos {
+    padding: 20px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    background: var(--blanco);
+    box-shadow: var(--sombra);
+}
+
+.accesos-rapidos h2 {
+    margin: 0 0 16px;
+    font-size: 1.1rem;
+    color: var(--azul-profundo);
+}
+
+.grid-accesos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.acceso-item {
+    display: block;
+    padding: 16px;
+    border: 1px solid var(--azul-claro);
+    border-radius: var(--radio);
+    color: var(--texto);
+    text-decoration: none;
+    background: var(--azul-suave);
+}
+
+.acceso-item:hover {
+    border-color: var(--azul-confianza);
+    background: var(--azul-claro);
+}
+
+.acceso-item h3 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    color: var(--azul-profundo);
+}
+
+.acceso-item p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--texto-secundario);
+}
+
+
+/* ---------- 10. Tablas ---------- */
+
+/* Panel azul que contiene la tabla; si la tabla no cabe, se desplaza dentro del panel */
+.contenido-tabla {
+    overflow-x: auto;
+    border: 1px solid var(--azul-noche);
+    border-radius: var(--radio);
+    color: var(--blanco);
+    background: var(--azul-profundo);
+    box-shadow: var(--sombra);
+}
+
+.contenido-tabla h2 {
+    margin: 0;
+    padding: 16px 16px 12px;
+    font-size: 1.1rem;
+}
+
+.contenido-tabla .form-acciones {
+    padding: 16px;
+}
+
+.tabla-oasis {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.tabla-oasis th,
+.tabla-oasis td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--azul-confianza);
+    text-align: left;
+}
+
+.tabla-oasis thead th {
+    white-space: nowrap;
+    background: var(--azul-noche);
+}
+
+/* La primera columna (códigos y nombres) no se parte en dos líneas */
+.tabla-oasis tbody td:first-child {
+    white-space: nowrap;
+}
+
+.tabla-oasis tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.tabla-oasis tbody tr:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.tabla-oasis .numero {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.tabla-vacia {
+    margin: 0;
+    padding: 16px;
+    text-align: center;
+    color: var(--azul-claro);
+}
+
+/* Fila del total en la factura */
+.tabla-oasis .total-factura td {
+    border-bottom: 0;
+    font-size: 1.05rem;
+    background: var(--azul-noche);
+}
+
+
+/* ---------- 11. Estados de vencimiento ---------- */
+
+/* Etiquetas: el estado siempre va escrito, el color solo lo refuerza */
+.estado,
+.badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.estado.vencido,
+.badge.estado-vencido {
+    color: var(--vencido);
+    background: var(--vencido-fondo);
+}
+
+.estado.proximo,
+.badge.estado-por-vencer {
+    color: var(--proximo);
+    background: var(--proximo-fondo);
+}
+
+.estado.vigente,
+.badge.estado-vigente {
+    color: var(--vigente);
+    background: var(--vigente-fondo);
+}
+
+/* Marca de color al inicio de cada fila en el control de vencimientos */
+tr.estado-vencido td:first-child {
+    box-shadow: inset 4px 0 0 var(--vencido-marca);
+}
+
+tr.estado-por-vencer td:first-child {
+    box-shadow: inset 4px 0 0 var(--proximo-marca);
+}
+
+tr.estado-vigente td:first-child {
+    box-shadow: inset 4px 0 0 var(--cian);
+}
+
+
+/* ---------- 12. Inicio de sesión ---------- */
 
 .pagina-login {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
     padding: 16px;
+    background: linear-gradient(160deg, var(--crema) 0%, var(--azul-suave) 100%);
 }
 
-.login {
+.login-card {
+    display: block;
     width: 100%;
     max-width: 360px;
-}
-
-.login button {
-    width: 100%;
-    margin-top: 16px;
-}
-
-.aviso {
-    padding: 8px 12px;
-    border-radius: 6px;
-    background: var(--ok-fondo);
-}
-
-.aviso.error {
-    background: var(--rojo-fondo);
-    color: var(--rojo);
-}
-
-/* ----- Tablas ----- */
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
+    padding: 0 28px 28px;
+    overflow: hidden;
     border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    background: var(--blanco);
+    box-shadow: var(--sombra);
 }
 
-th,
-td {
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--borde);
-    text-align: left;
+/* Franja de color en la parte superior de la tarjeta */
+.login-card::before {
+    content: "";
+    display: block;
+    height: 6px;
+    margin: 0 -28px 28px;
+    background: linear-gradient(90deg, var(--cian) 0%, var(--coral) 100%);
 }
 
-th {
-    background: #e9efed;
+.login-card h1 {
+    margin: 0 0 20px;
+    font-size: 1.6rem;
+    color: var(--azul-profundo);
 }
 
-.numero {
-    text-align: right;
+/* Título con degradado, solo en navegadores que lo soportan */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .login-card h1 {
+        color: transparent;
+        background: var(--degradado-boton);
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
 }
 
-/* ----- Estados de vencimiento ----- */
+.login-card form > div {
+    margin-bottom: 14px;
+}
 
-.estado {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 999px;
+.login-card label {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.login-card .alerta-exito,
+.login-card .alerta-error {
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+}
+
+.login-card .btn-primario {
+    width: 100%;
+    margin-top: 6px;
+}
+
+
+/* ---------- 13. Pie de página ---------- */
+
+body > footer {
+    grid-area: pie;
+    padding: 16px 24px;
     font-size: 0.85rem;
-    font-weight: bold;
+    text-align: center;
+    color: var(--azul-claro);
+    background: var(--azul-marino);
 }
 
-.estado.vencido,
-.tarjeta.vencido strong {
-    color: var(--rojo);
+body > footer p {
+    margin: 2px 0;
 }
 
-.estado.vencido {
-    background: var(--rojo-fondo);
-}
 
-.estado.proximo,
-.tarjeta.proximo strong {
-    color: var(--ambar);
-}
+/* ---------- 14. Pantallas pequeñas ---------- */
 
-.estado.proximo {
-    background: var(--ambar-fondo);
-}
+@media (max-width: 800px) {
+    /* La barra lateral pasa arriba y el menú se acomoda en filas */
+    body {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto 1fr auto;
+        grid-template-areas:
+            "barra"
+            "contenido"
+            "pie";
+    }
 
-.estado.vigente {
-    color: var(--verde-oscuro);
-    background: var(--ok-fondo);
+    .sidebar {
+        position: static;
+        height: auto;
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .sidebar::before {
+        padding: 0;
+    }
+
+    .sidebar ul {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .sidebar form {
+        margin-top: 0;
+        padding: 0;
+    }
+
+    .btn-logout {
+        width: auto;
+    }
+
+    main {
+        gap: 16px;
+        padding: 16px;
+    }
+
+    /* En pantallas angostas el texto ocupa todo el ancho: se quita el cian para que se lea bien */
+    .bienvenida,
+    .barra-superior {
+        padding: 20px;
+        background: var(--degradado-boton);
+    }
+
+    .bienvenida h1,
+    .barra-superior h1 {
+        font-size: 1.4rem;
+    }
+
+    .kpi-valor {
+        font-size: 2rem;
+    }
 }
