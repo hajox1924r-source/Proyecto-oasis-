@@ -3,11 +3,13 @@ package com.farmaciaoasis.service;
 import com.farmaciaoasis.model.Categoria;
 import com.farmaciaoasis.model.Producto;
 import com.farmaciaoasis.repository.CategoriaRepository;
+import com.farmaciaoasis.repository.DetalleVentaRepository;
 import com.farmaciaoasis.repository.LoteRepository;
 import com.farmaciaoasis.repository.ProductoRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductoService {
@@ -15,11 +17,14 @@ public class ProductoService {
     private final ProductoRepository productos;
     private final CategoriaRepository categorias;
     private final LoteRepository lotes;
+    private final DetalleVentaRepository detalles;
 
-    public ProductoService(ProductoRepository productos, CategoriaRepository categorias, LoteRepository lotes) {
+    public ProductoService(ProductoRepository productos, CategoriaRepository categorias,
+                           LoteRepository lotes, DetalleVentaRepository detalles) {
         this.productos = productos;
         this.categorias = categorias;
         this.lotes = lotes;
+        this.detalles = detalles;
     }
 
     public List<Producto> listar() {
@@ -57,14 +62,19 @@ public class ProductoService {
     }
 
     /**
-     * Elimina un medicamento solo si no tiene lotes registrados: los lotes guardan
-     * el historial de entradas y ventas, así que no se borran en cascada.
+     * Elimina un medicamento y sus lotes. Se usa, por ejemplo, cuando se registró un
+     * producto por error. Si el medicamento tiene ventas registradas NO se elimina,
+     * para no dañar el historial de facturas: en ese caso el administrador puede
+     * editarlo o retirar sus lotes, pero no borrarlo.
      */
+    @Transactional
     public void eliminar(Integer idProducto) {
-        if (lotes.existsByProducto_IdProducto(idProducto)) {
+        if (detalles.existsByLote_Producto_IdProducto(idProducto)) {
             throw new IllegalStateException(
-                    "No se puede eliminar: el medicamento tiene lotes registrados. Elimine primero sus lotes.");
+                    "No se puede eliminar: el medicamento ya tiene ventas registradas.");
         }
+        // Sin ventas: se borran primero sus lotes (que no se vendieron) y luego el producto.
+        lotes.deleteByProducto_IdProducto(idProducto);
         productos.deleteById(idProducto);
     }
 }

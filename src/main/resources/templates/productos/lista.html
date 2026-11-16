@@ -120,7 +120,7 @@
                                class="btn-sm btn-editar">Ver / Editar</a>
                             <form th:action="@{/productos/eliminar/{id}(id=${producto.idProducto})}"
                                   method="post" style="display:inline"
-                                  onsubmit="return confirm('¿Eliminar este medicamento? Esta acción no se puede deshacer.');">
+                                  onsubmit="return confirm('¿Eliminar este medicamento y sus lotes? No se puede si ya tiene ventas. Esta acción no se puede deshacer.');">
                                 <button type="submit" class="btn-sm btn-peligro">Eliminar</button>
                             </form>
                         </td>
