@@ -14,4 +14,7 @@ public interface LoteRepository extends JpaRepository<Lote, Integer> {
     /** Lotes con unidades disponibles que vencen en la fecha límite o antes (incluye los ya vencidos). */
     @Query("select l from Lote l where l.cantidad > 0 and l.fechaVencimiento <= :limite order by l.fechaVencimiento")
     List<Lote> buscarQueVencenHasta(@Param("limite") LocalDate limite);
+
+    /** Indica si el medicamento tiene algún lote registrado (aunque esté en cero). */
+    boolean existsByProducto_IdProducto(Integer idProducto);
 }

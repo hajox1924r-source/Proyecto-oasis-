@@ -3,6 +3,7 @@ package com.farmaciaoasis.service;
 import com.farmaciaoasis.model.Categoria;
 import com.farmaciaoasis.model.Producto;
 import com.farmaciaoasis.repository.CategoriaRepository;
+import com.farmaciaoasis.repository.LoteRepository;
 import com.farmaciaoasis.repository.ProductoRepository;
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,10 +14,12 @@ public class ProductoService {
 
     private final ProductoRepository productos;
     private final CategoriaRepository categorias;
+    private final LoteRepository lotes;
 
-    public ProductoService(ProductoRepository productos, CategoriaRepository categorias) {
+    public ProductoService(ProductoRepository productos, CategoriaRepository categorias, LoteRepository lotes) {
         this.productos = productos;
         this.categorias = categorias;
+        this.lotes = lotes;
     }
 
     public List<Producto> listar() {
@@ -51,5 +54,17 @@ public class ProductoService {
         p.setPrecioVenta(precioVenta);
         p.setCategoria(categorias.findById(idCategoria).orElse(null));
         productos.save(p);
+    }
+
+    /**
+     * Elimina un medicamento solo si no tiene lotes registrados: los lotes guardan
+     * el historial de entradas y ventas, así que no se borran en cascada.
+     */
+    public void eliminar(Integer idProducto) {
+        if (lotes.existsByProducto_IdProducto(idProducto)) {
+            throw new IllegalStateException(
+                    "No se puede eliminar: el medicamento tiene lotes registrados. Elimine primero sus lotes.");
+        }
+        productos.deleteById(idProducto);
     }
 }

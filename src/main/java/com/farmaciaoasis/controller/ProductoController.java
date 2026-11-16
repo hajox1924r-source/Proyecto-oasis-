@@ -70,4 +70,18 @@ public class ProductoController {
         }
         return "redirect:/productos";
     }
+
+    /** Elimina un medicamento. Solo administrador; no se permite si tiene lotes registrados. */
+    @PostMapping("/eliminar/{id}")
+    public String eliminar(@PathVariable Integer id, RedirectAttributes flash) {
+        try {
+            productoService.eliminar(id);
+            flash.addFlashAttribute("mensajeExito", "Medicamento eliminado correctamente.");
+        } catch (IllegalStateException e) {
+            flash.addFlashAttribute("mensajeError", e.getMessage());
+        } catch (Exception e) {
+            flash.addFlashAttribute("mensajeError", "No se pudo eliminar el medicamento.");
+        }
+        return "redirect:/productos";
+    }
 }
