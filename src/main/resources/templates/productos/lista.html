@@ -69,7 +69,7 @@
                         <select id="categoria" name="categoria" class="form-control">
                             <option value="">Seleccione una categoría...</option>
                             <option th:each="cat : ${categorias}"
-                                    th:value="${cat.id}"
+                                    th:value="${cat.idCategoria}"
                                     th:text="${cat.nombre}">Analgésicos</option>
                         </select>
                     </div>
@@ -116,7 +116,7 @@
                         <td class="numero"
                             th:text="${producto.precioVenta != null ? '$ ' + #numbers.formatDecimal(producto.precioVenta, 1, 'POINT', 0, 'COMMA') : '$ 0'}">$ 3.500</td>
                         <td sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN')">
-                            <a th:href="@{/productos/editar/{id}(id=${producto.id})}"
+                            <a th:href="@{/productos/editar/{id}(id=${producto.idProducto})}"
                                class="btn-sm btn-editar">Ver / Editar</a>
                         </td>
                     </tr>

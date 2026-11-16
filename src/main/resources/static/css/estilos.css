@@ -24,14 +24,18 @@
     --vigente: #0A5E7A;
     --vigente-fondo: #D3F0F8;
 
-    --degradado-fondo: linear-gradient(180deg, #0A2A4D 0%, #124473 16%, #DDEFFA 50%, #FFFFFF 100%);
-    --degradado-barra: linear-gradient(180deg, #0B4F8A 0%, #1768B5 100%);
-    --degradado-banner: linear-gradient(120deg, #0B4F8A 0%, #1768B5 65%, #22B8E0 100%);
+    --degradado-fondo: linear-gradient(180deg, #072138 0%, #0A2A4D 10%, #124473 20%, #DDEFFA 52%, #FFFFFF 100%);
+    --degradado-barra: linear-gradient(180deg, #0C5A9E 0%, #0B4F8A 45%, #124C86 100%);
+    --degradado-banner: linear-gradient(120deg, #093F72 0%, #0B4F8A 40%, #1768B5 75%, #22B8E0 100%);
     --degradado-boton: linear-gradient(90deg, #0B4F8A 0%, #1768B5 100%);
+    --degradado-panel: linear-gradient(180deg, #0C5A9E 0%, #0B4F8A 55%, #093F72 100%);
 
     --radio: 8px;
     --radio-boton: 6px;
-    --sombra: 0 2px 8px rgba(10, 42, 77, 0.12);
+    --sombra: 0 4px 14px rgba(10, 42, 77, 0.18);
+    --sombra-fuerte: 0 12px 30px rgba(10, 42, 77, 0.30);
+    --brillo-superior: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    --transicion: 180ms ease;
 }
 
 * {
@@ -148,7 +152,8 @@ main > div:not([class]) {
     padding: 24px;
     border-radius: var(--radio);
     color: var(--blanco);
-    background: var(--degradado-banner);
+    background: radial-gradient(120% 140% at 85% 0%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 45%), var(--degradado-banner);
+    box-shadow: var(--sombra), var(--brillo-superior);
 }
 
 .barra-superior {
@@ -480,8 +485,8 @@ label {
     border: 1px solid var(--azul-noche);
     border-radius: var(--radio);
     color: var(--blanco);
-    background: var(--azul-profundo);
-    box-shadow: var(--sombra);
+    background: var(--degradado-panel);
+    box-shadow: var(--sombra), var(--brillo-superior);
 }
 
 .contenido-tabla h2 {
@@ -711,5 +716,100 @@ body > footer p {
 
     .kpi-valor {
         font-size: 2rem;
+    }
+}
+
+.nav-link,
+.acceso-item,
+.btn-primario,
+.btn-secundario,
+.btn-logout,
+.btn-filtro,
+.btn-sm,
+.form-control,
+.estado,
+.badge,
+.card-kpi,
+.bloque-registro {
+    transition: background var(--transicion), color var(--transicion),
+        border-color var(--transicion), box-shadow var(--transicion),
+        transform var(--transicion);
+}
+
+.tabla-oasis tbody tr {
+    transition: background var(--transicion);
+}
+
+.btn-primario:hover,
+.btn-secundario:hover,
+.btn-logout:hover,
+.btn-filtro:hover,
+.btn-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra);
+}
+
+.btn-primario:active,
+.btn-secundario:active,
+.btn-logout:active,
+.btn-filtro:active,
+.btn-sm:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+    transform: translateX(4px);
+}
+
+.acceso-item:hover,
+.card-kpi:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--sombra-fuerte);
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+main > section,
+main > .bienvenida,
+main > .barra-superior,
+main > .grid-dashboard,
+main > .contenido-tabla,
+main > .bloque-registro,
+main > .accesos-rapidos {
+    animation: aparecer 420ms ease both;
+}
+
+@keyframes latido-alerta {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(229, 72, 77, 0);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(229, 72, 77, 0.25);
+    }
+}
+
+.estado.vencido,
+.badge.estado-vencido {
+    animation: latido-alerta 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
     }
 }
