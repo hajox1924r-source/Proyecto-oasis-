@@ -25,7 +25,10 @@ public class SeguridadConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/css/**").permitAll()
+                // El administrador gestiona productos y lotes.
                 .requestMatchers("/productos/**", "/lotes/**").hasRole("ADMINISTRADOR")
+                // Solo el cajero realiza ventas / facturación.
+                .requestMatchers("/ventas/**").hasRole("CAJERO")
                 .anyRequest().authenticated())
             .formLogin(form -> form
                 .loginPage("/login")

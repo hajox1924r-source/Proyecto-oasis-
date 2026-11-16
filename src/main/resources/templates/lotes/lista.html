@@ -32,7 +32,7 @@
                     <select id="producto" name="producto" class="form-control" required>
                         <option value="">Seleccione un producto...</option>
                         <option th:each="prod : ${prods}"
-                                th:value="${prod.id}"
+                                th:value="${prod.idProducto}"
                                 th:text="${prod.nombre}">Acetaminofén</option>
                     </select>
                 </div>
@@ -42,7 +42,7 @@
                     <select id="proveedor" name="proveedor" class="form-control" required>
                         <option value="">Seleccione un proveedor...</option>
                         <option th:each="prov : ${provs}"
-                                th:value="${prov.id}"
+                                th:value="${prov.idProveedor}"
                                 th:text="${prov.nombre}">Distribuidora Oasis</option>
                     </select>
                 </div>
