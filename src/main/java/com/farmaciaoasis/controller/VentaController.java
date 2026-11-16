@@ -2,6 +2,7 @@ package com.farmaciaoasis.controller;
 
 import com.farmaciaoasis.model.DetalleVenta;
 import com.farmaciaoasis.model.Lote;
+import com.farmaciaoasis.model.Venta;
 import com.farmaciaoasis.service.VentaService;
 import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -92,13 +94,27 @@ public class VentaController {
             return "redirect:/ventas";
         }
         try {
-            ventaService.registrar(carrito, auth.getName());
+            Venta venta = ventaService.registrar(carrito, auth.getName());
             session.removeAttribute(CARRITO);
             flash.addFlashAttribute("mensajeExito", "Venta registrada correctamente.");
+            // Al registrar la venta se muestra la factura generada.
+            return "redirect:/ventas/factura/" + venta.getIdVenta();
         } catch (Exception e) {
             flash.addFlashAttribute("mensajeError", "No se pudo registrar la venta. Revise el stock de los lotes.");
+            return "redirect:/ventas";
         }
-        return "redirect:/ventas";
+    }
+
+    /** Muestra (e imprime) la factura de una venta ya registrada. */
+    @GetMapping("/factura/{id}")
+    public String factura(@PathVariable Integer id, Model model, RedirectAttributes flash) {
+        Venta venta = ventaService.buscarFactura(id);
+        if (venta == null) {
+            flash.addFlashAttribute("mensajeError", "No se encontró la factura solicitada.");
+            return "redirect:/ventas";
+        }
+        model.addAttribute("venta", venta);
+        return "ventas/factura";
     }
 
     @PostMapping("/limpiar")

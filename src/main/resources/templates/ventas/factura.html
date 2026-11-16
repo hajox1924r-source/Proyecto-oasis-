@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:with="titulo=${titulo} ?: 'Factura de venta - Farmacia Oasis'">
+<head th:replace="~{fragmentos :: head-general}">
+    <title>Factura de venta - Farmacia Oasis</title>
+</head>
+<body>
+
+    <!-- Fragmento: Sidebar -->
+    <aside th:replace="~{fragmentos :: sidebar}"></aside>
+
+    <!-- Contenido principal -->
+    <main>
+        <!-- Estilos solo para la impresión del comprobante -->
+        <style>
+            @media print {
+                .sidebar, .barra-superior .form-acciones, .no-imprimir { display: none !important; }
+                main { margin: 0 !important; }
+            }
+        </style>
+
+        <!-- Barra superior -->
+        <section class="barra-superior">
+            <div>
+                <h1>Comprobante de venta</h1>
+                <p>Factura generada al registrar la venta en caja.</p>
+            </div>
+            <div class="form-acciones no-imprimir">
+                <button type="button" class="btn-primario" onclick="window.print()">Imprimir factura</button>
+                <a th:href="@{/ventas}" class="btn-secundario">Nueva venta</a>
+            </div>
+        </section>
+
+        <!-- Mensajes flash -->
+        <div th:replace="~{fragmentos :: mensajes-flash}"></div>
+
+        <!-- Datos de la factura -->
+        <section class="contenido-tabla">
+            <h2>Farmacia Oasis</h2>
+            <p><strong>Factura N.º:</strong>
+               <span th:text="${venta.idVenta}">1</span></p>
+            <p><strong>Fecha:</strong>
+               <span th:text="${venta.fecha != null} ? ${#temporals.format(venta.fecha, 'dd/MM/yyyy HH:mm')} : '-'">13/11/2026 09:15</span></p>
+            <p><strong>Cajero:</strong>
+               <span th:text="${venta.cajero != null} ? ${venta.cajero.nombre} : 'Sin cajero'">Cajero</span></p>
+
+            <table class="tabla-oasis">
+                <thead>
+                    <tr>
+                        <th>Medicamento</th>
+                        <th>Lote</th>
+                        <th class="numero">Cantidad</th>
+                        <th class="numero">Precio Unitario</th>
+                        <th class="numero">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${venta.detalles}">
+                        <td th:text="${item.lote != null and item.lote.producto != null ? item.lote.producto.nombre : 'Sin medicamento'}">Acetaminofén</td>
+                        <td th:text="${item.lote != null ? item.lote.numeroLote : '-'}">A-1001</td>
+                        <td class="numero" th:text="${item.cantidad}">2</td>
+                        <td class="numero"
+                            th:with="precio=${item.precioUnitario != null ? item.precioUnitario : 0}"
+                            th:text="'$ ' + ${#numbers.formatDecimal(precio, 1, 'POINT', 0, 'COMMA')}">$ 3.500</td>
+                        <td class="numero"
+                            th:with="sub=${item.subtotal != null ? item.subtotal : 0}"
+                            th:text="'$ ' + ${#numbers.formatDecimal(sub, 1, 'POINT', 0, 'COMMA')}">$ 7.000</td>
+                    </tr>
+                    <tr th:if="${venta.detalles == null or #lists.isEmpty(venta.detalles)}">
+                        <td colspan="5">
+                            <p class="tabla-vacia">Esta factura no tiene renglones.</p>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="total-factura">
+                        <td colspan="4"><strong>Total a pagar</strong></td>
+                        <td class="numero">
+                            <strong th:text="'$ ' + ${#numbers.formatDecimal(venta.total != null ? venta.total : 0, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <p class="no-imprimir" style="margin-top: 1rem;">
+                Gracias por su compra. Este es un comprobante de venta sencillo de la Farmacia Oasis.
+            </p>
+        </section>
+    </main>
+
+    <!-- Fragmento: Footer -->
+    <footer th:replace="~{fragmentos :: footer}"></footer>
+
+</body>
+</html>

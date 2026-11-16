@@ -148,7 +148,10 @@
                 </thead>
                 <tbody>
                     <tr th:each="v : ${listaVentas}">
-                        <td th:text="${v.idVenta}">1</td>
+                        <td>
+                            <a th:href="@{/ventas/factura/{id}(id=${v.idVenta})}"
+                               th:text="${v.idVenta}" class="btn-sm btn-editar">1</a>
+                        </td>
                         <td th:text="${v.fecha != null} ? ${#temporals.format(v.fecha, 'dd/MM/yyyy HH:mm')} : '-'">13/11/2026 09:15</td>
                         <td th:text="${v.cajero != null} ? ${v.cajero.nombre} : 'Sin cajero'">Cajero</td>
                         <td class="numero"

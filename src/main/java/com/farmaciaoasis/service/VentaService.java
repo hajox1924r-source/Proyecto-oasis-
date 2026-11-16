@@ -41,6 +41,11 @@ public class VentaService {
         return lotes.findById(idLote).orElse(null);
     }
 
+    /** Busca una venta con todo su detalle para mostrarla como factura. */
+    public Venta buscarFactura(Integer idVenta) {
+        return ventas.buscarConDetalles(idVenta).orElse(null);
+    }
+
     /** Crea un renglón de venta (todavía sin guardar) para el carrito en sesión. */
     public DetalleVenta nuevoItem(Lote lote, int cantidad) {
         BigDecimal precio = (lote.getProducto() != null && lote.getProducto().getPrecioVenta() != null)
@@ -53,10 +58,12 @@ public class VentaService {
         return item;
     }
 
-    /** Registra la venta: descuenta el stock de cada lote y guarda la venta con sus detalles. */
+    /**
+     * Registra la venta: descuenta el stock de cada lote y guarda la venta con sus detalles.
+     * Devuelve la venta guardada (con su id) para poder mostrar la factura.
+     */
     @Transactional
-    public void registrar(List<DetalleVenta> carrito, String correoCajero) {
-        // ponytail: si quien vende es un administrador (no hay cajero con ese correo), usa el primer cajero
+    public Venta registrar(List<DetalleVenta> carrito, String correoCajero) {
         Cajero cajero = cajeros.findByCorreo(correoCajero)
                 .orElseGet(() -> cajeros.findAll().stream().findFirst().orElse(null));
 
@@ -83,6 +90,6 @@ public class VentaService {
             total = total.add(item.getSubtotal());
         }
         venta.setTotal(total);
-        ventas.save(venta);
+        return ventas.save(venta);
     }
 }
