@@ -17,7 +17,7 @@ public class DashboardController {
         this.loteService = loteService;
     }
 
-    @GetMapping("/")
+    @GetMapping({"/", "/dashboard"})
     public String dashboard(Model model) {
         List<Lote> alertas = loteService.listarVencidosYPorVencer();
         long vencidos = alertas.stream()
@@ -25,6 +25,9 @@ public class DashboardController {
                 .count();
         model.addAttribute("vencidos", vencidos);
         model.addAttribute("proximos", alertas.size() - vencidos);
+        // Totales reales para las tarjetas del panel.
+        model.addAttribute("totalProductos", loteService.listarProductos().size());
+        model.addAttribute("totalLotes", loteService.listar().size());
         return "dashboard";
     }
 }

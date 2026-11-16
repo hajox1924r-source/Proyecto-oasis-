@@ -51,7 +51,7 @@
                     <h3>Control de Vencimientos</h3>
                     <p>Monitoreo y alerta de lotes por vencer o vencidos</p>
                 </a>
-                <a th:href="@{/ventas}" class="acceso-item" sec:authorize="hasAnyRole('ADMINISTRADOR', 'ADMIN', 'CAJERO')">
+                <a th:href="@{/ventas}" class="acceso-item" sec:authorize="hasRole('CAJERO')">
                     <h3>Ventas / Facturación</h3>
                     <p>Registro y facturación de ventas en caja</p>
                 </a>

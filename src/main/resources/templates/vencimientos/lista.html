@@ -71,14 +71,18 @@
                                   th:text="${dias <= 0 ? 'VENCIDO' : (dias <= 30 ? 'POR VENCER' : 'ÓPTIMO')}">POR VENCER</span>
                         </td>
                         <td>
-                            <a th:if="${dias <= 0}"
-                               th:href="@{/lotes(id=${lote.idLote})}"
-                               class="btn-sm btn-peligro">Retirar lote</a>
-                            <a th:if="${dias > 0 and dias <= 30}"
+                            <!-- Lote vencido: solo el administrador lo retira del inventario. -->
+                            <form th:if="${dias <= 0}" sec:authorize="hasRole('ADMINISTRADOR')"
+                                  method="post" th:action="@{/lotes/retirar/{id}(id=${lote.idLote})}">
+                                <button type="submit" class="btn-sm btn-peligro">Retirar lote</button>
+                            </form>
+                            <!-- Lote por vencer: el cajero prioriza su venta. -->
+                            <a th:if="${dias > 0 and dias <= 30}" sec:authorize="hasRole('CAJERO')"
                                th:href="@{/ventas(lote=${lote.idLote})}"
                                class="btn-sm btn-alerta">Priorizar salida</a>
-                            <a th:if="${dias > 30}"
-                               th:href="@{/lotes(id=${lote.idLote})}"
+                            <!-- Lote vigente: el administrador consulta el historial de lotes. -->
+                            <a th:if="${dias > 30}" sec:authorize="hasRole('ADMINISTRADOR')"
+                               th:href="@{/lotes}"
                                class="btn-sm btn-editar">Ver lote</a>
                         </td>
                     </tr>
