@@ -17,4 +17,7 @@ public interface LoteRepository extends JpaRepository<Lote, Integer> {
 
     /** Indica si el medicamento tiene algún lote registrado (aunque esté en cero). */
     boolean existsByProducto_IdProducto(Integer idProducto);
+
+    /** Borra todos los lotes de un medicamento (se usa al eliminar un producto sin ventas). */
+    long deleteByProducto_IdProducto(Integer idProducto);
 }
